@@ -200,8 +200,6 @@ def lalalal(message):
         
     # if user not root
     elif users[idi]["root"] == False:
-        
-        answer = bot(message.text)
 
         bot.send_message(message.chat.id, "Хорошо")
 
