@@ -1,47 +1,50 @@
 import telebot
-import config
+import GNU_config
 import random
 import json
 
 from telebot import types
 
 # for bot
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
+# from sklearn.feature_extraction.text import CountVectorizer
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.model_selection import train_test_split
 
-BOT_CONFIG = config.BOT_CONFIG
+# BOT_CONFIG = GNU_config.BOT_CONFIG
 
-# start
-X = []
-y = []
+# # start
+# X = []
+# y = []
 
-for intent in list(BOT_CONFIG["intents"].keys()):
-	try:
-		for example in BOT_CONFIG['intents'][intent]["examples"]:
-			X.append(example)
-			y.append(intent)
-	except:
-		pass
+# for intent in list(BOT_CONFIG["intents"].keys()):
 
-def clean(text): # очистка команды
-	text = text.lower() # команды перевод в нижний регистр
-	cleaned_text = ''
-	for ch in text:
-		if ch in 'абвгдеёжзиклмнопрстуфхцчшщъыьэюя ': # очистка от иноязычных букв
-			cleaned_text = cleaned_text + ch 
-	return cleaned_text
+#     try:
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# 	    for example in BOT_CONFIG['intents'][intent]["examples"]:
+# 		    X.append(example)
+# 		    y.append(intent)
 
-vectorizer = CountVectorizer(preprocessor=clean, analyzer='char', ngram_range=(2,3))
-X_train_vect = vectorizer.fit_transform(X_train)
-X_test_vect = vectorizer.transform(X_test)
+#     except KeyError:
+#         None
 
-log_reg = LogisticRegression(C=0.2)
-log_reg.fit(X_train_vect, y_train)
+# def clean(text): # очистка команды
+# 	text = text.lower() # команды перевод в нижний регистр
+# 	cleaned_text = ''
+# 	for ch in text:
+# 		if ch in 'абвгдеёжзиклмнопрстуфхцчшщъыьэюя ': # очистка от иноязычных букв
+# 			cleaned_text = cleaned_text + ch 
+# 	return cleaned_text
 
-print('start')
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# vectorizer = CountVectorizer(preprocessor=clean, analyzer='char', ngram_range=(2,3))
+# X_train_vect = vectorizer.fit_transform(X_train)
+# X_test_vect = vectorizer.transform(X_test)
+
+# log_reg = LogisticRegression(C=0.2)
+# log_reg.fit(X_train_vect, y_train)
+
+# print('start')
 
 def get_intent_by_model(text):
 	return log_reg.predict(vectorizer.transform([text]))[0]
@@ -50,13 +53,13 @@ def bot(question):
 	intent = get_intent_by_model(question)
 	return random.choice(BOT_CONFIG['intents'][intent]['responses'])
 
-bot = telebot.TeleBot(config.TOKEN)
+bot = telebot.TeleBot(GNU_config.TOKEN)
 
-with open("users.json") as f:
+with open("GNU_users.json") as f:
     users = json.load(f)
-with open("messags.json") as f:
+with open("GNU_messags.json") as f:
     messgs = json.load(f)
-with open("words.json") as f:
+with open("GNU_words.json") as f:
     words = json.load(f)
 
 @bot.message_handler(commands=['start'])
@@ -168,7 +171,7 @@ def lalalal(message):
 
             print(message.chat.id, message.chat.username, " is new familiar")
 
-            with open("users.json", "w") as f:
+            with open("GNU_users.json", "w") as f:
                 json.dump(users, f, indent=4)
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -200,13 +203,13 @@ def lalalal(message):
         
         answer = bot(message.text)
 
-        bot.send_message(message.chat.id, answer)
+        bot.send_message(message.chat.id, "Хорошо")
 
     messg = messgs[idi]
     messg.append(message.text)
     messgs.update({idi : messg})
 
-    with open("messags.json", "w") as f:
+    with open("GNU_messags.json", "w") as f:
         json.dump(messgs, f, indent=4)
 
 @bot.callback_query_handler(func=lambda call: True)
